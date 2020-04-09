@@ -2,6 +2,9 @@ const Discord = require("discord.js");
 const client = new Discord.Client();
 
 const config = require("./config.json");
+const Classes = require("./classes.js");
+
+
 
 //const currentServer;
 
@@ -25,7 +28,7 @@ client.on("message", msg => {
 	let isGuild = msg.guild;
 
 	if (isGuild) { // in a guild my man
-
+		
 	} else { // DMs
 
 	}

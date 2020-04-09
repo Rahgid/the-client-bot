@@ -1,9 +1,9 @@
-class Server {
+/*class Server {
 	constructor(serverId) {
 		this.serverId = serverId; // which server dis, supplied by some property of discord.js ima have to look up
 		this.prefix = "!"; // default command prefix
 	}
-}
+}*/
 
 class Command {// extends Server {
 	constructor(commands, authority, server, properties = []) {
@@ -12,11 +12,25 @@ class Command {// extends Server {
 		this.authority = authority; // the access level required to call its function (0 = everyone, 1 = specific role, 2 = administrator), this is not currently implemented
 	}
 
-	check(server) {
+	check(serverId, messageObject) {
+		const serverConfig = config.servers; // get list of servers
+
+		let prefix;
+
+		for (const server of serverConfig) {
+			if (server.serverId == serverId) {
+				prefix = server.prefix;
+			}
+		}
+
+		prefix = prefix || serverConfig[0].prefix;
+
 		let commandValues = Object.values(this.commands);
 
-		for (const command of commandValues) {
+		let messageContent = messageObject.content;
 
+		for (const command of commandValues) {
+			
 		}
 	}
 }
