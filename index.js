@@ -1,21 +1,23 @@
 const Discord = require("discord.js");
 const client = new Discord.Client();
 
-const config = require("./config.json");
+const fs = require("fs");
+
+let config = fs.readFileSync("config.json", {
+		encoding: "utf-8",
+		flag: "r+"
+});
+
+config = JSON.parse(config);
+
 const Classes = require("./classes.js");
-
-
-
-//const currentServer;
 
 client.on("ready", () => {
 	console.log(`Logged in as ${client.user.tag}!`);
 	console.log(client);
-
-	//currentServer = new Server(client.)
 });
 
-let prefix = "!"; // currently global, update to table later
+let prefix = "!"; // json support implemented, only here for legacy w/ old functions until new commands implemented
 
 function randNum(min, max) {
 	min = Math.ceil(min);
