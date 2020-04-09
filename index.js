@@ -34,8 +34,8 @@ client.on("message", msg => {
 		console.log(commandArr);
 		for (const command of commandArr) {
 			if (command.check(msg.guild.id, msg)) {
-				console.log(command.check(msg.guild.id, msg));
 				command.activate(msg);
+				break; // it found the command, don't keep looking
 			}
 		}
 	} else { // DMs
@@ -82,7 +82,7 @@ client.on("message", msg => {
 		messageContent = randomChar + messageContent.substr(1);
 
 		msg.reply(messageContent);
-	} else if (messageContent.startsWith(prefix + "reverse ")) {
+	} /* else if (messageContent.startsWith(prefix + "reverse ")) {
 		let messageContent = msg.content;
 
 		let msgAfterSpace = messageContent.indexOf(" ");
@@ -94,7 +94,7 @@ client.on("message", msg => {
 		reverseContent = reverseContent.join("");
 
 		msg.reply(reverseContent);
-	} else if (messageContent.startsWith(prefix + "should i ") || messageContent.startsWith(prefix + "should we ") || messageContent.startsWith(prefix + "should you ")) {
+	} */else if (messageContent.startsWith(prefix + "should i ") || messageContent.startsWith(prefix + "should we ") || messageContent.startsWith(prefix + "should you ")) {
 		let truthy = randNum(0, 1);
 
 		if (truthy == 0) {

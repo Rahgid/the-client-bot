@@ -16,9 +16,8 @@ config = JSON.parse(config);
 
 global.commandArray = [];
 
-class Command {// extends Server {
-	constructor(commands, authority, server, properties = []) {
-		//super();
+class Command {
+	constructor(commands, authority, properties = []) {
 		this.commands = commands; // the commands capable of activating functions
 		this.authority = authority; // the access level required to call its function (0 = everyone, 1 = specific role, 2 = administrator), this is not currently implemented
 	
@@ -50,25 +49,48 @@ class Command {// extends Server {
 
 		return false;
 	}
+
+	strip(messageObject, type = 0) { // default type is normal strip, returns string; type 1 returns bool if only one argument or not
+		let messageContent = messageObject.content;
+
+		let msgAfterSpace = messageContent.indexOf(" ") + 1;
+
+		messageContent = messageContent.substr(msgAfterSpace);
+
+		switch(type) {
+			case 0:
+				return messageContent;
+				break;
+			case 1: // i could make this default but i'm going to leave it in case i implement more cases later
+				msgAfterSpace = messageContent.indexOf(" ");
+				if (msgAfterSpace > -1) { // "Is there only one argument?" "No"
+					return false;
+				}
+
+				return true; // "Yes, there is only one argument"
+				break;
+			default: // to-do set up error object class and return it to my functions
+				return {};
+		}
+	}
 }
 
 // commands
-let test = new Command(["test", "test2"], 0, 0);
 
-test.activate = function(msg) {
-	msg.reply("test");
-}
+// potential to-do: pass the "activate" function as a parameter (anon func) when creating new objects
+// only problem is potentially w/ arguments and "this" keyword
+// not necessary at this stage, i think
 
-let test3 = new Command(["test1", "test3"], 0, 0);
+let reverse = new Command(["reverse", "r"], 0); // potential to-do: convert authority level to an enum-type object
 
-console.log("HEREERERERERERERRERE");
+reverse.activate = function(msg) { // above comments worth consideration, every single command will have this function
+	let messageContent = this.strip(msg);
 
-for (const com of commandArray) {
-	console.log(com);
+	let reverseContent = messageContent.split("");
+	reverseContent = reverseContent.reverse();
+	reverseContent = reverseContent.join("");
 
-	let msg = {"content": "!test h"};
-
-	console.log(com.check(0, msg));
+	msg.reply(reverseContent);
 }
 
 /*
