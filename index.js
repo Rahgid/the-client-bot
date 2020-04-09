@@ -26,11 +26,18 @@ function randNum(min, max) {
 	return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
-client.on("message", msg => {	
+client.on("message", msg => {
 	let isGuild = msg.guild;
 
 	if (isGuild) { // in a guild my man
-		
+		let commandArr = global.commandArray;
+		console.log(commandArr);
+		for (const command of commandArr) {
+			if (command.check(msg.guild.id, msg)) {
+				console.log(command.check(msg.guild.id, msg));
+				command.activate(msg);
+			}
+		}
 	} else { // DMs
 
 	}
