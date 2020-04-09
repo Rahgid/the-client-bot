@@ -6,13 +6,13 @@ class Server {
 }
 
 class Command {// extends Server {
-	constructor(commands, authority) {
+	constructor(commands, authority, server, properties = []) {
 		//super();
 		this.commands = commands; // the commands capable of activating functions
 		this.authority = authority; // the access level required to call its function (0 = everyone, 1 = specific role, 2 = administrator), this is not currently implemented
 	}
 
-	check() {
+	check(server) {
 		let commandValues = Object.values(this.commands);
 
 		for (const command of commandValues) {

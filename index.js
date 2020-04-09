@@ -1,7 +1,7 @@
 const Discord = require("discord.js");
 const client = new Discord.Client();
 
-const config = require("config.json");
+const config = require("./config.json");
 
 //const currentServer;
 
@@ -21,13 +21,11 @@ function randNum(min, max) {
 	return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
-let totalTracker = {0, 0}; // no, yes
-
 client.on("message", msg => {	
 	let isGuild = msg.guild;
 
 	if (isGuild) { // in a guild my man
-		
+
 	} else { // DMs
 
 	}
@@ -95,4 +93,4 @@ client.on("message", msg => {
 	}
 });
 
-client.login(JSON.parse(config.token));
+client.login(config.token);
