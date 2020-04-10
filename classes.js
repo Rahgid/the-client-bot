@@ -1,10 +1,3 @@
-/*class Server {
-	constructor(serverId) {
-		this.serverId = serverId; // which server dis, supplied by some property of discord.js ima have to look up
-		this.prefix = "!"; // default command prefix
-	}
-}*/
-
 const fs = require("fs");
 
 let config = fs.readFileSync("config.json", {
@@ -17,10 +10,11 @@ config = JSON.parse(config);
 global.commandArray = [];
 
 class Command {
-	constructor(commands, authority, properties = [], activateFunc) {
+	constructor(commands, authority, properties = {}, activateFunc) {
 		this.commands = commands; // the commands capable of activating functions
 		this.authority = authority; // the access level required to call its function (0 = everyone, 1 = specific role, 2 = administrator), this is not currently implemented
 		this.activate = activateFunc;
+		this.properties = properties;
 
 		commandArray.push(this);
 	}
@@ -42,7 +36,13 @@ class Command {
 
 		messageContent = messageContent.toLowerCase();
 
-		for (const command of this.commands) { // to-do: rework this for spaces to be optional based off which command
+		for (const command of this.commands) {
+			if (this.properties.doesNotRequireSpace) {
+				if (messageContent.startsWith(prefix + command)) {
+					return true;
+				}
+			}
+
 			if (messageContent.startsWith(prefix + command + " ")) { // the space ensures the command has arguments
 				return true;
 			}
@@ -97,7 +97,7 @@ function randNum(min, max) {
 // only problem is potentially w/ arguments and "this" keyword
 // not necessary at this stage, i think
 
-let reverse = new Command(["reverse", "re"], 0, [], function(msg) {
+let reverse = new Command(["reverse", "re"], 0, {}, function(msg) {
 	let messageContent = this.strip(msg);
 
 	let reverseContent = messageContent.split("");
@@ -120,7 +120,7 @@ let reverse = new Command(["reverse", "re"], 0, [], function(msg) {
 const https = require("https");
 const cheerio = require("cheerio");
 
-let rhyme = new Command(["rhyme", "rh"], 0, [], function(msg) {
+let rhyme = new Command(["rhyme", "rh"], 0, {}, function(msg) {
 	let messageContent = this.strip(msg);
 
 	if (messageContent.lastIndexOf(" ") > -1) {
@@ -234,7 +234,7 @@ let rhyme = new Command(["rhyme", "rh"], 0, [], function(msg) {
 	req.end();
 });
 
-let should = new Command(["should i", "should you", "should we"], 0, [], function(msg) {
+let should = new Command(["should i", "should you", "should we"], 0, {}, function(msg) {
 	let truthy = randNum(0, 1);
 
 	if (truthy == 0) {
@@ -242,6 +242,20 @@ let should = new Command(["should i", "should you", "should we"], 0, [], functio
 	} else {
 		msg.reply("yes");
 	}
+});
+
+let poker = new Command(["poker", "po"], 0, {"doesNotRequireSpace": 1}, function(msg) {
+	let pokerOptions = [
+		"fold",
+		"check",
+		"all in",
+		"raise",
+		"call"
+	];
+
+	let randChoice = randNum(0, pokerOptions.length);
+
+	msg.reply(pokerOptions[randChoice]);
 });
 
 /*
