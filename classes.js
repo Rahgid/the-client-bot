@@ -110,7 +110,11 @@ let rhyme = new Command(["rhyme", "rh"], 0);
 rhyme.activate = function(msg) {
 	let messageContent = this.strip(msg);
 
-	if (this.strip(msg, 1)) {
+	//if (this.strip(msg, 1)) { // one-word check
+		if (messageContent.lastIndexOf(" ") > -1) {
+			messageContent = messageContent.substr(messageContent.lastIndexOf(" ") + 1);
+		}
+
 		const options = {
 			hostname: "rhymezone.com",
 			port: 443,
@@ -197,7 +201,12 @@ rhyme.activate = function(msg) {
 
 				rhymeChoice = rhymeChoice.replace(quickMatch, " ");
 
-				msg.reply(rhymeChoice);
+				if (rhymeChoice.length > 0) {
+					msg.reply(rhymeChoice);
+				} else {
+					msg.reply("I can't rhyme that, man.");
+				}
+
 				msg.channel.stopTyping();
 			}).catch(err => {
 				console.log("rhyme promise parent error: " + err);
@@ -211,9 +220,9 @@ rhyme.activate = function(msg) {
 		});
 
 		req.end();
-	} else {
+	/*} else {
 		msg.reply("I only support single word rhymes!"); // may update this to support them later tho
-	}
+	}*/
 }
 
 /*
