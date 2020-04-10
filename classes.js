@@ -75,13 +75,22 @@ class Command {
 	}
 }
 
+// functions
+
+function randNum(min, max) {
+	min = Math.ceil(min);
+	max = Math.floor(max);
+
+	return Math.floor(Math.random() * (max - min + 1) + min);
+}
+
 // commands
 
 // potential to-do: pass the "activate" function as a parameter (anon func) when creating new objects
 // only problem is potentially w/ arguments and "this" keyword
 // not necessary at this stage, i think
 
-let reverse = new Command(["reverse", "r"], 0); // potential to-do: convert authority level to an enum-type object
+let reverse = new Command(["reverse", "re"], 0); // potential to-do: convert authority level to an enum-type object
 
 reverse.activate = function(msg) { // above comments worth consideration, every single command will have this function
 	let messageContent = this.strip(msg);
@@ -91,6 +100,120 @@ reverse.activate = function(msg) { // above comments worth consideration, every 
 	reverseContent = reverseContent.join("");
 
 	msg.reply(reverseContent);
+}
+
+const https = require("https");
+const cheerio = require("cheerio");
+
+let rhyme = new Command(["rhyme", "rh"], 0);
+
+rhyme.activate = function(msg) {
+	let messageContent = this.strip(msg);
+
+	if (this.strip(msg, 1)) {
+		const options = {
+			hostname: "rhymezone.com",
+			port: 443,
+			path: `/r/rhyme.cgi?Word=${messageContent}&typeofrhyme=perfect&org1=syl&org2=l&org3=y`,
+			method: "GET"
+		}
+
+		msg.channel.startTyping();
+
+		const req = https.request(options, async function(res) {
+			console.log(`statusCode: ${res.statusCode}`);
+
+			let rhymes = [];
+
+			let rhymePromises = [];
+
+			let rhymeParentPromise = new Promise((parentResolve, parentReject) => {
+				res.on("data", async function (d) {
+					let rhymePromise = new Promise((resolve, reject) => {
+						const $ = cheerio.load(d);
+
+						console.log("SGFKJDSFGKSJDFGKLJDSFLKGJFDSKLGJFSDLKGFDSJLGK");
+						console.log($.html($(".r")));
+
+						const htmlData = $.html($(".r")); // get elements with class "r"
+
+						let reg = /(d=[^-][a-zA-Z_-]+)/g;
+						let result;
+
+						/*
+							Using variables and setting the "lastNode" in this loop at the end while
+							beforehand checking it against the "firstNode" that I set at the beginning
+							of the loop, I can find a way to check if the lastNode is larger/more syllables
+							than the firstNode of the next loop's iteration (mainly for when data is called
+							again). This way, I can prevent "almost rhymes" from being displayed.
+							There are also other ways to do this, but it is not yet implemented.
+							I also may consider displaying them if no "perfect" rhymes are displayed.
+						*/
+
+						while ((result = reg.exec(htmlData)) !== null) {
+							rhymes.push(result[0].substr(2));
+						}
+
+						resolve(rhymes);
+					});
+
+					let re = await rhymePromise;
+
+					rhymePromise.then(function(rhymeArray) {
+						rhymePromises.push(rhymePromise);
+					}).catch(reason => {
+						console.log("rejected promise: " + reason);
+					});
+				});
+
+				let rhymePromiseLength = rhymePromises.length;
+				let currRhymePromiseLength = rhymePromiseLength;
+
+				setTimeout(() => {
+					console.log("dfklsdfsdf")
+					do {
+						currRhymePromiseLength = rhymePromiseLength;
+						setTimeout(() => console.log("testdfsdfdsf"), 0);
+						console.log("this happened");
+					} while (currRhymePromiseLength < rhymePromiseLength)
+
+					parentResolve();
+				}, 200);
+			});
+
+			rhymePromises.push(rhymeParentPromise);
+
+			let re2 = await rhymeParentPromise;
+
+			console.log("awaited2");
+
+			Promise.all(rhymePromises).then(values => {
+				let rhymeChoiceNum = randNum(0, rhymes.length);
+				console.log(rhymeChoiceNum);
+				let rhymeChoice = rhymes[rhymeChoiceNum]; // to-do: add check to see if rhyme exists & if there are results
+				console.log(rhymeChoice);
+
+				let quickMatch = /[_]+/g;
+
+				rhymeChoice = rhymeChoice.replace(quickMatch, " ");
+
+				msg.reply(rhymeChoice);
+				msg.channel.stopTyping();
+			}).catch(err => {
+				console.log("rhyme promise parent error: " + err);
+			});
+
+
+		});
+
+		req.on("error", error => {
+			console.error(error);
+		});
+
+		req.end();
+	} else {
+		msg.reply("I only support single word rhymes!"); // may update this to support them later tho
+	}
 }
 
 /*

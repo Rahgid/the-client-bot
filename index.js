@@ -46,7 +46,7 @@ client.on("message", msg => {
 
 	let messageContent = msg.content.toLowerCase();
 
-	if (messageContent.startsWith(prefix + "rhyme ")) { // to-do: consider number starts & other non-alpha chars
+	/*if (messageContent.startsWith(prefix + "rhyme ")) { // to-do: consider number starts & other non-alpha chars
 		// to-do: scrape rhyme zone instead of just changing the first letter
 		// to-do: create a class for these commands, set default parameters and stuff, make it easier to control/scale
 		// to-do: consider case-support
@@ -82,7 +82,7 @@ client.on("message", msg => {
 		messageContent = randomChar + messageContent.substr(1);
 
 		msg.reply(messageContent);
-	} /* else if (messageContent.startsWith(prefix + "reverse ")) {
+	} *//* else if (messageContent.startsWith(prefix + "reverse ")) {
 		let messageContent = msg.content;
 
 		let msgAfterSpace = messageContent.indexOf(" ");
@@ -94,7 +94,7 @@ client.on("message", msg => {
 		reverseContent = reverseContent.join("");
 
 		msg.reply(reverseContent);
-	} */else if (messageContent.startsWith(prefix + "should i ") || messageContent.startsWith(prefix + "should we ") || messageContent.startsWith(prefix + "should you ")) {
+	} */if (messageContent.startsWith(prefix + "should i ") || messageContent.startsWith(prefix + "should we ") || messageContent.startsWith(prefix + "should you ")) {
 		let truthy = randNum(0, 1);
 
 		if (truthy == 0) {
