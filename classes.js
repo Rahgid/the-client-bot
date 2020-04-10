@@ -1,10 +1,3 @@
-/*class Server {
-	constructor(serverId) {
-		this.serverId = serverId; // which server dis, supplied by some property of discord.js ima have to look up
-		this.prefix = "!"; // default command prefix
-	}
-}*/
-
 const fs = require("fs");
 
 let config = fs.readFileSync("config.json", {
