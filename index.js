@@ -1,5 +1,5 @@
-const Discord = require("discord.js");
-const client = new Discord.Client();
+global.Discord = require("discord.js");
+const client = new global.Discord.Client({intents: ["GUILDS", "GUILD_MESSAGES", "GUILD_MESSAGE_TYPING"]});
 
 const fs = require("fs");
 
@@ -14,10 +14,8 @@ const Classes = require("./classes.js");
 
 client.on("ready", () => {
 	console.log(`Logged in as ${client.user.tag}!`);
-	console.log(client);
+	//console.log(client);
 });
-
-let prefix = "!"; // json support implemented, only here for legacy w/ old functions until new commands implemented
 
 function randNum(min, max) {
 	min = Math.ceil(min);
@@ -29,9 +27,11 @@ function randNum(min, max) {
 client.on("message", msg => {
 	let isGuild = msg.guild;
 
+	console.log("got message");
+
 	if (isGuild) { // in a guild my man
 		let commandArr = global.commandArray;
-		console.log(commandArr);
+		//console.log(commandArr);
 		for (const command of commandArr) {
 			if (command.check(msg.guild.id, msg)) {
 				command.activate(msg);
